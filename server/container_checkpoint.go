@@ -29,9 +29,7 @@ func (s *Server) CheckpointContainer(ctx context.Context, req *types.CheckpointC
 	}
 	opts := &lib.ContainerCheckpointOptions{
 		TargetFile: req.Location,
-		// For the forensic container checkpointing use case we
-		// keep the container running after checkpointing it.
-		KeepRunning: true,
+		KeepRunning: !req.GetLeaveStopped(),
 	}
 
 	_, err = s.ContainerServer.ContainerCheckpoint(ctx, config, opts)
