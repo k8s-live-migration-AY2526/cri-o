@@ -28,7 +28,7 @@ func (s *Server) CheckpointContainer(ctx context.Context, req *types.CheckpointC
 		ID: req.ContainerId,
 	}
 	opts := &lib.ContainerCheckpointOptions{
-		TargetFile: req.Location,
+		TargetFile:  req.Location,
 		KeepRunning: !req.GetLeaveStopped(),
 	}
 
@@ -37,7 +37,7 @@ func (s *Server) CheckpointContainer(ctx context.Context, req *types.CheckpointC
 		return nil, err
 	}
 
-	log.Infof(ctx, "Checkpointed container: %s", req.ContainerId)
+	log.Infof(ctx, "Checkpointed container: %s, keepRunning: %t", req.ContainerId, !req.GetLeaveStopped())
 
 	return &types.CheckpointContainerResponse{}, nil
 }
