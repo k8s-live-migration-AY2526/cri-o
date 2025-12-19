@@ -175,6 +175,10 @@ func (r *runtimeOCI) CreateContainer(ctx context.Context, c *Container, cgroupPa
 				"--lsm-mount-context="+c.Spec().Linux.MountLabel,
 			)
 		}
+
+		// Since checkpoint defaults with --file-locks,
+		// It makes sense to default restore with --file-locks as well
+		args = append(args, "--runtime-opt", "--file-locks")
 	}
 
 	log.WithFields(ctx, logrus.Fields{
