@@ -179,6 +179,8 @@ func (r *runtimeOCI) CreateContainer(ctx context.Context, c *Container, cgroupPa
 		// Since checkpoint defaults with --file-locks,
 		// It makes sense to default restore with --file-locks as well
 		args = append(args, "--runtime-opt", "--file-locks")
+
+		args = append(args, "--runtime-opt", "--tcp-close")
 	}
 
 	log.WithFields(ctx, logrus.Fields{
@@ -1440,7 +1442,7 @@ func (r *runtimeOCI) defaultRuntimeArgs() []string {
 }
 
 // CheckpointContainer checkpoints a container.
-func (r *runtimeOCI) CheckpointContainer(ctx context.Context, c *Container, specgen *rspec.Spec, leaveRunning bool) error {
+func (r *runtimeOCI) CheckpointContainer(ctx context.Context, c *Container, specgen *rspec.Spec, leaveRunning bool, tcpEstablished bool) error {
 	c.opLock.Lock()
 	defer c.opLock.Unlock()
 	runtimePath := c.RuntimePathForPlatform(r)
@@ -1479,6 +1481,9 @@ func (r *runtimeOCI) CheckpointContainer(ctx context.Context, c *Container, spec
 	)
 	if leaveRunning {
 		args = append(args, "--leave-running")
+	}
+	if tcpEstablished {
+		args = append(args, "--tcp-established")
 	}
 
 	args = append(args, c.ID())

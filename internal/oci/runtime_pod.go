@@ -158,8 +158,9 @@ func (r *runtimePod) CheckpointContainer(
 	c *Container,
 	specgen *rspec.Spec,
 	leaveRunning bool,
+	tcpEstablished bool,
 ) error {
-	return r.oci.CheckpointContainer(ctx, c, specgen, leaveRunning)
+	return r.oci.CheckpointContainer(ctx, c, specgen, leaveRunning, tcpEstablished)
 }
 
 func (r *runtimePod) RestoreContainer(

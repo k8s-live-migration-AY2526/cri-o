@@ -28,8 +28,9 @@ func (s *Server) CheckpointContainer(ctx context.Context, req *types.CheckpointC
 		ID: req.ContainerId,
 	}
 	opts := &lib.ContainerCheckpointOptions{
-		TargetFile:  req.Location,
-		KeepRunning: !req.GetLeaveStopped(),
+		TargetFile:     req.Location,
+		KeepRunning:    !req.GetLeaveStopped(),
+		TcpEstablished: req.GetTcpEstablished(),
 	}
 
 	_, err = s.ContainerServer.ContainerCheckpoint(ctx, config, opts)
