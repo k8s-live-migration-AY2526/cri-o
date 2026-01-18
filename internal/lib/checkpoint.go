@@ -26,6 +26,8 @@ type ContainerCheckpointOptions struct {
 	// KeepRunning tells the API to keep the container running
 	// after writing the checkpoint to disk
 	KeepRunning bool
+	// TcpEstablished tells the API to enable checkpointing of connections
+	TcpEstablished bool
 	// TargetFile tells the API to read (or write) the checkpoint image
 	// from (or to) the filename set in TargetFile
 	TargetFile string
@@ -88,7 +90,7 @@ func (c *ContainerServer) ContainerCheckpoint(
 		}
 	}
 
-	if err := c.runtime.CheckpointContainer(ctx, ctr, specgen.Config, opts.KeepRunning); err != nil {
+	if err := c.runtime.CheckpointContainer(ctx, ctr, specgen.Config, opts.KeepRunning, opts.TcpEstablished); err != nil {
 		return "", fmt.Errorf("failed to checkpoint container %s: %w", ctr.ID(), err)
 	}
 	if opts.TargetFile != "" {
@@ -101,11 +103,6 @@ func (c *ContainerServer) ContainerCheckpoint(
 				log.Warnf(ctx, "Unable to remove checkpoint directory %s: %v", ctr.CheckpointPath(), err)
 			}
 		}()
-	}
-	if !opts.KeepRunning {
-		if err := c.storageRuntimeServer.StopContainer(ctx, ctr.ID()); err != nil {
-			return "", fmt.Errorf("failed to unmount container %s: %w", ctr.ID(), err)
-		}
 	}
 
 	if !opts.Keep {
